@@ -8,5 +8,8 @@
   },
   "files": [
     "build"
-  ]
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  }
 }

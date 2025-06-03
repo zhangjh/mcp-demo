@@ -23,7 +23,7 @@ server.tool(
   {
     location: z.string().describe("Location name (e.g. '杭州')"),
   },
-  async ({ location }) => {
+  async ({ location }: { location: string }) => {
     const requestUrl = `${NWS_API_BASE}?key=${WeatherAPIKey}&location=${location}&language=zh-Hans&unit=c&start=0&days=1`;
     console.log(requestUrl);
     // const resData = await makeNWSRequest<WeatherResp>(requestUrl);
