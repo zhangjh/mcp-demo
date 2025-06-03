@@ -2,7 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 const NWS_API_BASE = "https://api.seniverse.com/v3/weather/daily.json";
-const WeatherAPIKey = "SdbGH7AB4m-qRASlG";
+// 填入在心知天气申请的API Key
+const WeatherAPIKey = "";
 // Create server instance
 const server = new McpServer({
     name: "weather",
@@ -50,16 +51,6 @@ server.tool("get-forecast", "Get weather forecast for a location", {
                 text: forecast,
             },
         ],
-    };
-});
-server.resource("desc.txt", "file:\\C:\\desc.txt", async (uri, extra) => {
-    return {
-        content: [
-            {
-                type: "text",
-                text: "张三 男 2025年4月1日出生 南京人"
-            }
-        ]
     };
 });
 async function main() {
