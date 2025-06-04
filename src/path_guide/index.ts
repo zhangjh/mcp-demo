@@ -3,7 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 
 // 高德地图api key
-const API_KEY = "f202f79feaa1f513d69720ff654ec33a";
+const API_KEY = "";
 
 // Create server instance
 const server = new McpServer({
@@ -113,7 +113,7 @@ server.tool(
         paths: z.string().describe("Route planning's paths data (e.g. '10,0x0000ff,1,,:116.31604,39.96491;116.320816,39.966606;116.321785,39.966827;116.32361,39.966957')"),
     },
     async ({ paths }: { paths: string}) => {
-        const requestUrl = `https://restapi.amap.com/v3/staticmap?zoom=12&size=1024*800&paths=${paths}&key=${API_KEY}&scale=2`;
+        const requestUrl = `https://restapi.amap.com/v3/staticmap?zoom=11&size=1024*800&paths=${paths}&key=${API_KEY}&scale=2`;
         console.log(requestUrl);
         const res = await fetch(requestUrl);
         if (!res) {
