@@ -17,7 +17,7 @@ const server = new McpServer({
 
 server.tool(
     "(获取经纬度)get-lating-and-longitude",
-    "(根据给定的地址获取经纬度坐标)Get lating and longitude by address",
+    "根据给定的地址获取经纬度坐标",
     {
         address: z.string().describe("Address name (e.g. '杭州')"),
     },
@@ -59,13 +59,13 @@ server.tool(
 
 server.tool(
     "(路径规划)Route planning",
-    "Make a route plan by coordinates (start point and target point)",
+    "根据起始点经纬度获取路径规划，返回规划的路径信息的描述和对应的规划路径的经纬度坐标集合，以便后续将路径规划绘制成图",
     {
         source: z.string().describe("Source's Coordinates (e.g. '116.397,39.909')"),
         destination: z.string().describe("Destination's Coordinates name (e.g. '116.397,39.909')"),
     },
     async ({ source, destination }: { source: string, destination: string }) => {
-        const requestUrl = `https://restapi.amap.com/v5/direction/driving?origin=${source}&destination=${destination}&key=${API_KEY}`;
+        const requestUrl = `https://restapi.amap.com/v5/direction/driving?origin=${source}&destination=${destination}&key=${API_KEY}&show_fields=polyline`;
         console.log(requestUrl);
         const res = await fetch(requestUrl);
         const resData = await res.json();
@@ -81,12 +81,18 @@ server.tool(
         }
         if (resData.status === "1") {
             return {
+                // 返回路径规划的路径信息包括文本和经纬度坐标集合
                 content: [
                     {
+                        type: "text",                        
+                        text: `路径规划描述: \n${resData.route.paths[0].steps.map((step: any) => step.instruction).join("\n")}
+                        ` 
+                    }, 
+                    {
                         type: "text",
-                        text: `route plan is: \n` 
-                        + resData.route.paths[0].steps.map((step: any) => step.instruction).join("\n"),
-                    },
+                        text: `路径规划的经纬度坐标集合: \n${resData.route.paths[0].steps.map((step: any) => step.polyline).join("\n")}
+                        `
+                    }
                 ],
             };
         }
@@ -102,12 +108,12 @@ server.tool(
 
 server.tool(
     "(路径绘图)Draw route using paths",
-    "(路径绘图)Draw route using paths",
+    "接收路径规划的一系列路径点坐标数据，返回一张base64编码的路径绘图",
     {
         paths: z.string().describe("Route planning's paths data (e.g. '10,0x0000ff,1,,:116.31604,39.96491;116.320816,39.966606;116.321785,39.966827;116.32361,39.966957')"),
     },
     async ({ paths }: { paths: string}) => {
-        const requestUrl = `https://restapi.amap.com/v3/staticmap?zoom=15&size=500*500&paths=${paths}&key=${API_KEY}`;
+        const requestUrl = `https://restapi.amap.com/v3/staticmap?zoom=12&size=1024*800&paths=${paths}&key=${API_KEY}&scale=2`;
         console.log(requestUrl);
         const res = await fetch(requestUrl);
         if (!res) {
@@ -128,7 +134,7 @@ server.tool(
             content: [
                 {
                     type: "text",
-                    text: "data:image/png;base64," + base64Image
+                    text: base64Image
                 },
             ],
         };
